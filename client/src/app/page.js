@@ -7,30 +7,19 @@ import DesignModal from "@/components/home/designs-modal";
 import Header from "@/components/home/header";
 import RecentDesigns from "@/components/home/recent-designs";
 import SideBar from "@/components/home/sidebar";
-import SubscriptionModal from "@/components/subscription/premium-modal";
 import { getUserDesigns } from "@/services/design-service";
-import { getUserSubscription } from "@/services/subscription-service";
 import { useEditorStore } from "@/store";
 import { useEffect } from "react";
 
 export default function Home() {
   const {
-    setUserSubscription,
     setUserDesigns,
-    showPremiumModal,
-    setShowPremiumModal,
     showDesignsModal,
     setShowDesignsModal,
     userDesigns,
     setUserDesignsLoading,
     userDesignsLoading,
   } = useEditorStore();
-
-  const fetchUserSubscription = async () => {
-    const response = await getUserSubscription();
-
-    if (response.success) setUserSubscription(response.data);
-  };
 
   async function fetchUserDesigns() {
     setUserDesignsLoading(true);
@@ -43,7 +32,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    fetchUserSubscription();
     fetchUserDesigns();
   }, []);
 
@@ -59,10 +47,6 @@ export default function Home() {
           <RecentDesigns />
         </main>
       </div>
-      <SubscriptionModal
-        isOpen={showPremiumModal}
-        onClose={setShowPremiumModal}
-      />
       <DesignModal
         isOpen={showDesignsModal}
         onClose={setShowDesignsModal}

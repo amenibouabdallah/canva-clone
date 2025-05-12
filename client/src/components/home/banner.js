@@ -16,13 +16,7 @@ function Banner() {
   console.log(userSubscription, "userSubscription");
 
   const handleCreateNewDesign = async () => {
-    if (userDesigns?.length >= 5 && !userSubscription.isPremium) {
-      toast.error("Please upgrade to premium!", {
-        description: "You need to upgrade to premium to create more designs",
-      });
-
-      return;
-    }
+    
     if (loading) return;
     try {
       setLoading(true);

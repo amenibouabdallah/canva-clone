@@ -65,13 +65,7 @@ function Header() {
   }, [name, canvas, designId]);
 
   const handleExport = () => {
-    if (userDesigns?.length >= 5 && !userSubscription.isPremium) {
-      toast.error("Please upgrade to premium!", {
-        description: "You need to upgrade to premium to create more designs",
-      });
-
-      return;
-    }
+   
     setShowExportModal(true);
   };
 
