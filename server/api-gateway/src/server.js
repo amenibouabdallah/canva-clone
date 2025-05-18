@@ -4,14 +4,29 @@ const proxy = require("express-http-proxy");
 const cors = require("cors");
 const helmet = require("helmet");
 const authMiddleware = require("./middleware/auth-middleware");
+const authRoutes = require("./routes/auth-routes");
+const mongoose = require("mongoose");
 
 const app = express();
-const PORT = 5004; // Hardcoded port for the API Gateway
+const PORT = process.env.PORT || 5004;
+
+// MongoDB connection
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log("Connected to MongoDB");
+}).catch((err) => {
+  console.error("MongoDB connection error:", err);
+});
 
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Auth routes
+app.use("/v1/auth", authRoutes);
 
 // Proxy options
 const proxyOptions = {
@@ -26,10 +41,10 @@ const proxyOptions = {
   },
 };
 
-// Hardcoded service addresses
-const DESIGN_SERVICE = "http://localhost:5001";
-const UPLOAD_SERVICE = "http://localhost:5002";
-const SUBSCRIPTION_SERVICE = "http://localhost:5000";
+// Service addresses
+const DESIGN_SERVICE = process.env.DESIGN;
+const UPLOAD_SERVICE = process.env.UPLOAD;
+const SUBSCRIPTION_SERVICE = process.env.SUBSCRIPTION;
 
 app.use(
   "/v1/designs",

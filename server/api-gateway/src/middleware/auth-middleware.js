@@ -1,36 +1,57 @@
 const { OAuth2Client } = require("google-auth-library");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 async function authMiddleware(req, res, next) {
   try {
-    console.log("GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
-
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       console.error("No token provided in Authorization header");
       return res.status(401).json({ error: "Access denied! No Token provided" });
     }
 
-    console.log("Token received:", token);
+    // Try JWT verification first
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.userId);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      req.user = user;
+      req.headers["x-user-id"] = user._id.toString();
+      return next();
+    } catch (jwtError) {
+      // If JWT verification fails, try OAuth
+      console.log("Attempting OAuth verification");
+    }
 
-    // Verify the token
+    // OAuth verification
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID, // Ensure this matches the client ID
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
 
     const payload = ticket.getPayload();
-    console.log("Token payload:", payload);
+    
+    // Check if user exists, if not create new user
+    let user = await User.findOne({ email: payload.email });
+    if (!user) {
+      user = new User({
+        fullname: payload.name,
+        email: payload.email,
+        profilePicture: payload.picture,
+        isVerified: true, // OAuth users are auto-verified
+      });
+      await user.save();
+    }
 
-    // Set the x-user-id header for downstream services
-    req.headers["x-user-id"] = payload.sub; // Use the `sub` field as the user ID
-
-    req.user = payload; // Attach user info to the request
+    req.user = user;
+    req.headers["x-user-id"] = user._id.toString();
     next();
   } catch (error) {
     console.error("Token verification failed:", error.message);
-    console.error("Error details:", error);
     res.status(401).json({ error: "Access denied! Please login to continue" });
   }
 }
