@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const authMiddleware = require("./middleware/auth-middleware");
 const mongoose = require("mongoose");
 const googleAuthRoutes = require("./google-auth-routes");
+const userRoutes = require("./user-routes");
 
 const app = express();
 const PORT = 5004; // Hardcoded port for the API Gateway
@@ -77,6 +78,7 @@ app.use(
 );
 
 app.use("/auth", googleAuthRoutes);
+app.use("/user", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`API Gateway is running on port ${PORT}`);

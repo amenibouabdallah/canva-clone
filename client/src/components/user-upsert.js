@@ -1,13 +1,14 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 
 export default function UserUpsert() {
   const { data: session, status } = useSession();
+  const upsertedRef = useRef(false);
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user) {
+    if (status === "authenticated" && session?.user && !upsertedRef.current) {
       // Log the full session object for debugging
       console.log("Full session object:", session);
       // Try to get googleId from token if not present in user
@@ -24,6 +25,7 @@ export default function UserUpsert() {
       }).catch((err) => {
         console.error("User upsert failed", err);
       });
+      upsertedRef.current = true;
     }
   }, [session, status]);
 

@@ -49,22 +49,23 @@ function SideBar() {
             icon: <Home className="h-6 w-6" />,
             label: "Home",
             active: true,
+            onClick: null,
           },
           {
             icon: <FolderOpen className="h-6 w-6" />,
             label: "Projects",
             active: false,
+            onClick: () => setShowDesignsModal(true),
           },
-          
+          {
+            icon: <CreditCard className="h-6 w-6" />,
+            label: "Settings",
+            active: false,
+            onClick: () => router.push("/settings"),
+          },
         ].map((menuItem, index) => (
           <div
-            onClick={
-              menuItem.label === "Billing"
-                ? () => setShowPremiumModal(true)
-                : menuItem.label === "Projects"
-                ? () => setShowDesignsModal(true)
-                : null
-            }
+            onClick={menuItem.onClick}
             key={index}
             className="flex cursor-pointer flex-col items-center w-full"
           >
