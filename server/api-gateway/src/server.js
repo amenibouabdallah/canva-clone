@@ -42,6 +42,7 @@ const proxyOptions = {
 const DESIGN_SERVICE = "http://localhost:5001";
 const UPLOAD_SERVICE = "http://localhost:5002";
 const SUBSCRIPTION_SERVICE = "http://localhost:5000";
+const ADMIN_SERVICE = "http://localhost:4004";
 
 app.use(
   "/v1/designs",
@@ -77,6 +78,14 @@ app.use(
   })
 );
 
+app.use(
+  "/v1/admin",
+  proxy(ADMIN_SERVICE, {
+    ...proxyOptions,
+    proxyReqPathResolver: (req) => req.originalUrl.replace(/^\/v1\/admin/, ""),
+  })
+);
+
 app.use("/auth", googleAuthRoutes);
 app.use("/user", userRoutes);
 
@@ -85,4 +94,5 @@ app.listen(PORT, () => {
   console.log(`DESIGN Service is running on ${DESIGN_SERVICE}`);
   console.log(`UPLOAD Service is running on ${UPLOAD_SERVICE}`);
   console.log(`SUBSCRIPTION Service is running on ${SUBSCRIPTION_SERVICE}`);
+  console.log(`ADMIN Service is running on ${ADMIN_SERVICE}`);
 });
