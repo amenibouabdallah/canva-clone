@@ -7,8 +7,6 @@ import Sidebar from "./sidebar";
 import { useCallback, useEffect, useState } from "react";
 import { useEditorStore } from "@/store";
 import { getUserDesignByID } from "@/services/design-service";
-import Properties from "./properties";
-import SubscriptionModal from "../subscription/premium-modal";
 
 function MainEditor() {
   const params = useParams();
@@ -189,11 +187,7 @@ function MainEditor() {
           </main>
         </div>
       </div>
-      {showProperties && isEditing && <Properties />}
-      <SubscriptionModal
-        isOpen={showPremiumModal}
-        onClose={setShowPremiumModal}
-      />
+     
     </div>
   );
 }
