@@ -45,6 +45,11 @@ export default function AdminDashboard() {
       .catch(() => setError("Failed to load users"));
   }, [router]);
 
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    router.push("/admin/login");
+  };
+
   if (error) return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-300 via-orange-300 to-pink-300 p-4">
       <div className="bg-white rounded-3xl shadow-xl p-8 text-red-600 text-center animate-pulse">{error}</div>
@@ -119,6 +124,20 @@ export default function AdminDashboard() {
               strokeLinejoin="round"
               strokeWidth="2"
               d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+            />
+          </svg>
+        </div>
+        <div
+          className="p-3 rounded-full cursor-pointer transition-all duration-200 text-gray-600 hover:bg-pink-100"
+          onClick={handleLogout}
+          title="Logout"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m5 4v-7a3 3 0 00-3-3H5"
             />
           </svg>
         </div>
@@ -338,9 +357,9 @@ export default function AdminDashboard() {
                     <p><span className="font-semibold text-pink-500">ID:</span> {selectedUser._id}</p>
                     <p><span className="font-semibold text-pink-500">Email:</span> {selectedUser.email}</p>
                     <p><span className="font-semibold text-pink-500">Name:</span> {selectedUser.name}</p>
-                    <p><span className="font-semibold text-pink-500">Login Count:</span> {selectedUser.loginCount}</p>
                     <p><span className="font-semibold text-pink-500">Created At:</span> {new Date(selectedUser.createdAt).toLocaleString()}</p>
                     <p><span className="font-semibold text-pink-500">Updated At:</span> {new Date(selectedUser.updatedAt).toLocaleString()}</p>
+                   
                   </div>
                   <button
                     onClick={closeModal}
